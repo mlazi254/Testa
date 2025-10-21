@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create and share personalized love messages">
+    <title>Love Message Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            margin: 20px 0;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .emoji {
+            font-size: 32px;
+            margin: 0 5px;
+        }
+        
+        input, button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 77, 121, 0.4);
+        }
+        
+        button {
+            background: linear-gradient(to right, #ff4d79, #ff2e63);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 77, 121, 0.4);
+        }
+        
+        button:hover {
+            background: linear-gradient(to right, #e6005c, #cc0052);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 77, 121, 0.6);
+        }
+        
+        .output {
+            margin-top: 20px;
+            font-size: 16px;
+            display: none;
+            color: #fff;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(to right, #4CAF50, #45a049);
+            margin-top: 10px;
+        }
+        
+        .copy-btn:hover {
+            background: linear-gradient(to right, #45a049, #3d8b40);
+        }
+        
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .loading {
+            display: none;
+            margin: 10px 0;
+        }
+        
+        .loading-spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ff4d79;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="emoji">💕</span> Love Message Generator <span class="emoji">💕</span></h1>
+        <input type="text" id="name" placeholder="Enter your loved one's name" aria-label="Loved one's name">
+        <button onclick="generateLink()" class="pulse">Generate Love Message</button>
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+        </div>
+        <div class="output" id="output"></div>
+        <button id="copyBtn" style="display:none;" onclick="copyLink()" class="copy-btn">Copy Link</button>
+    </div>
+
+    <div class="footer">
+        <p>Made with <span class="emoji">❤️</span></p>
+    </div>
+
+    <script>
+        function generateLink() {
+            const name = document.getElementById("name").value.trim();
+            const outputDiv = document.getElementById("output");
+            const copyBtn = document.getElementById("copyBtn");
+            const loading = document.getElementById("loading");
+
+            if (!name) {
+                alert("Please enter your loved one's name!");
+                return;
+            }
+
+            // Show loading
+            loading.style.display = "block";
+
+            // Simulate processing time
+            setTimeout(() => {
+                // Generate the link in the format: /wish?name=[loved one's name]
+                const link = `${window.location.origin}/wish?name=${encodeURIComponent(name)}`;
+                outputDiv.innerHTML = `Share this link with your loved one:<br><a href="${link}" style="color: white; text-decoration: underline;">${link}</a>`;
+                outputDiv.style.display = "block";
+                copyBtn.style.display = "block";
+                
+                // Hide loading
+                loading.style.display = "none";
+            }, 1500);
+        }
+
+        function copyLink() {
+            const outputDiv = document.getElementById("output");
+            const link = outputDiv.querySelector("a").href;
+            
+            navigator.clipboard.writeText(link).then(() => {
+                alert("Link copied! Send it to your loved one 💕");
+            }).catch(() => {
+                // Fallback for older browsers
+                const textarea = document.createElement("textarea");
+                textarea.value = link;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+                alert("Link copied! Send it to your loved one 💕");
+            });
+        }
+        
+        // Allow pressing Enter to generate link
+        document.getElementById("name").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                generateLink();
+            }
+        });
+    </script>
+</body>
+</html>
